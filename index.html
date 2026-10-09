@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🏮 Sakura Japanese Dining — Pesan Online</title>
+<style>
+  :root{
+    --red:#b81d24; --red-2:#e04a4a; --red-dark:#8a1218;
+    --ink:#241f1d; --ink-soft:#6b605a;
+    --cream:#fdf7f0; --card:#ffffff; --line:#efe1d6;
+    --gold:#c9a227; --sakura:#f9d3da;
+    --shadow:0 8px 24px rgba(70,35,20,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",sans-serif;
+    background:var(--cream); color:var(--ink); line-height:1.5;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(249,211,218,.35), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(201,162,39,.12), transparent 45%);
+    background-attachment:fixed;
+  }
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .jp{font-size:.75em;opacity:.65;letter-spacing:.06em}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;overflow:hidden;text-align:center;color:#fff;
+    padding:52px 20px 60px;
+    background:
+      radial-gradient(circle at 20% 0%, #3d2622 0%, #1b1311 65%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 2px, transparent 2px 8px);
+  }
+  #petals{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .petal{position:absolute;top:-30px;animation:fall linear infinite}
+  @keyframes fall{to{transform:translateY(480px) rotate(360deg)}}
+  .hero-inner{position:relative;z-index:2;max-width:820px;margin:0 auto}
+  .hero .badge-lantern{font-size:2.2rem;letter-spacing:.3em;margin-bottom:6px}
+  .hero h1{
+    font-size:clamp(1.9rem,5vw,3.1rem);letter-spacing:.04em;
+    background:linear-gradient(180deg,#fff 20%,#f3c9cf 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero .jp-sub{font-size:.95rem;letter-spacing:.5em;color:#e8b7bd;margin-top:6px}
+  .hero p.tagline{margin:14px auto 0;max-width:520px;color:#cbb9b4;font-style:italic;font-size:.95rem}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:24px}
+  .chip{
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+    padding:7px 15px;border-radius:999px;font-size:.8rem;color:#f2e4e0;backdrop-filter:blur(4px);
+  }
+  .chip b{color:#fff}
+
+  /* ---------- CATEGORY NAV ---------- */
+  .catnav{position:sticky;top:0;z-index:40;background:rgba(253,247,240,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .catnav-inner{max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+  .catnav-inner::-webkit-scrollbar{display:none}
+  .catbtn{
+    flex:0 0 auto;padding:9px 16px;border-radius:999px;font-size:.85rem;font-weight:600;
+    border:1px solid var(--line);background:#fff;color:var(--ink-soft);transition:.2s;white-space:nowrap;
+  }
+  .catbtn:hover{border-color:var(--red-2);color:var(--red)}
+  .catbtn.active{background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(184,29,36,.28)}
+
+  /* ---------- LAYOUT ---------- */
+  .layout{max-width:1280px;margin:0 auto;padding:24px 20px 120px;display:grid;grid-template-columns:1fr 360px;gap:26px;align-items:start}
+  .searchbar{position:relative;margin-bottom:22px}
+  .searchbar input{
+    width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:1px solid var(--line);
+    background:#fff;font-size:.95rem;outline:none;box-shadow:var(--shadow);transition:.2s;
+  }
+  .searchbar input:focus{border-color:var(--red-2);box-shadow:0 0 0 4px rgba(224,74,74,.1)}
+  .searchbar .ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:.5}
+
+  .menu-section{margin-bottom:36px}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+  .section-head h2{font-size:1.35rem;letter-spacing:.01em}
+  .section-head .count{font-size:.78rem;color:var(--ink-soft);white-space:nowrap}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+
+  /* ---------- CARD ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;
+    display:flex;gap:13px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(70,35,20,.13)}
+  .card.signature{border-color:#e7d59a;background:linear-gradient(135deg,#fffdf6,#fff9e9)}
+  .card.signature::after{content:"SIGNATURE";position:absolute;top:0;right:0;background:var(--gold);color:#fff;font-size:.6rem;font-weight:800;letter-spacing:.1em;padding:4px 12px;border-bottom-left-radius:12px}
+  .thumb{
+    flex:0 0 62px;height:62px;border-radius:15px;display:grid;place-items:center;font-size:1.9rem;
+    background:linear-gradient(140deg,#fdeef0,#f7e3d6);border:1px solid #f3e2d8;
+  }
+  .card.signature .thumb{background:linear-gradient(140deg,#fdf1cf,#f6e2b4)}
+  .card-main{flex:1;min-width:0}
+  .card-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .card-top h3{font-size:1rem;line-height:1.25}
+  .card-main p{font-size:.78rem;color:var(--ink-soft);margin:5px 0 10px}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .price{font-weight:800;color:var(--red);font-size:.98rem;font-family:Georgia,serif}
+
+  .btn-add{
+    background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;
+    padding:8px 15px;border-radius:10px;font-size:.78rem;font-weight:700;transition:.2s;
+    box-shadow:0 4px 12px rgba(184,29,36,.25);
+  }
+  .btn-add:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .btn-add:active{transform:scale(.96)}
+
+  .stepper{display:flex;align-items:center;gap:2px;background:#fdf1ec;border:1px solid #f3ddd3;border-radius:10px;padding:2px}
+  .stepper button{width:28px;height:28px;border-radius:8px;font-size:1.05rem;font-weight:700;color:var(--red);display:grid;place-items:center;transition:.15s}
+  .stepper button:hover{background:var(--red);color:#fff}
+  .stepper span{min-width:24px;text-align:center;font-weight:800;font-size:.85rem}
+  .stepper.small button{width:24px;height:24px;font-size:.9rem}
+
+  /* ---------- CART ---------- */
+  .cart-panel{
+    position:sticky;top:74px;background:#fff;border:1px solid var(--line);border-radius:20px;
+    box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;
+    max-height:calc(100vh - 100px);
+  }
+  .cart-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#fff6f4,#fff)}
+  .cart-head h2{font-size:1.05rem}
+  .close-cart{display:none;font-size:1.1rem;opacity:.5;padding:4px 8px}
+  .cart-body{flex:1;overflow-y:auto;padding:12px 14px;min-height:120px}
+  .cart-empty{text-align:center;padding:34px 10px;color:var(--ink-soft)}
+  .cart-empty div{font-size:2.6rem;margin-bottom:8px;opacity:.7}
+  .cart-empty p{margin:0;font-weight:700;color:var(--ink)}
+  .cart-empty span{font-size:.8rem}
+  .cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+  .cart-item:last-child{border-bottom:none}
+  .ci-emoji{flex:0 0 38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:1.15rem;background:#fdeef0}
+  .ci-main{flex:1;min-width:0}
+  .ci-name{font-size:.83rem;font-weight:700;line-height:1.25}
+  .ci-price{font-size:.72rem;color:var(--ink-soft);margin-top:2px}
+  .ci-price b{color:var(--red)}
+  .cart-foot{padding:14px 18px 18px;border-top:1px solid var(--line);background:#fffaf7}
+  .cart-foot .row{display:flex;justify-content:space-between;font-size:.85rem;color:var(--ink-soft);margin-bottom:7px}
+  .cart-foot .row.total{font-size:1.1rem;font-weight:800;color:var(--ink);border-top:1px dashed var(--line);padding-top:10px;margin-top:10px;font-family:Georgia,serif}
+  .cart-foot .row.total span:last-child{color:var(--red)}
+  .btn-primary{
+    width:100%;margin-top:14px;padding:14px;border-radius:13px;font-weight:800;font-size:.95rem;color:#fff;
+    background:linear-gradient(135deg,var(--red),var(--red-dark));box-shadow:0 8px 20px rgba(184,29,36,.3);transition:.2s;
+  }
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn-primary:active{transform:scale(.98)}
+  .btn-ghost{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);font-weight:700;font-size:.88rem;background:#fff;color:var(--ink-soft)}
+  .btn-ghost:hover{border-color:var(--red-2);color:var(--red)}
+
+  /* ---------- FAB ---------- */
+  .fab{
+    display:none;position:fixed;right:18px;bottom:18px;z-index:50;align-items:center;gap:9px;
+    background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;
+    padding:13px 20px;border-radius:999px;font-weight:800;font-size:.88rem;
+    box-shadow:0 10px 28px rgba(184,29,36,.45);
+  }
+  .fab .badge{background:#fff;color:var(--red);border-radius:999px;font-size:.7rem;font-weight:900;padding:2px 8px;min-width:22px;text-align:center}
+
+  /* ---------- MODAL ---------- */
+  .modal{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(28,14,12,.6);backdrop-filter:blur(4px)}
+  .modal.show{display:flex;animation:fadeIn .2s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal-box{background:var(--cream);width:min(580px,100%);max-height:92vh;overflow-y:auto;border-radius:22px;box-shadow:0 30px 70px rgba(0,0,0,.35);animation:pop .25s cubic-bezier(.2,.9,.3,1.3)}
+  @keyframes pop{from{transform:scale(.94) translateY(14px);opacity:0}to{transform:none;opacity:1}}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--cream);z-index:2;border-radius:22px 22px 0 0}
+  .modal-head h3{font-size:1.15rem}
+  .icon-btn{font-size:1.1rem;opacity:.5;padding:4px 8px;border-radius:8px}
+  .icon-btn:hover{opacity:1;background:#0000000d}
+  .modal-body{padding:20px 22px 24px}
+
+  .field{margin-bottom:15px}
+  .field label{display:block;font-size:.78rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px}
+  .field input,.field textarea,.field select{
+    width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff;
+    font-size:.9rem;font-family:inherit;outline:none;transition:.2s;color:var(--ink);
+  }
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--red-2);box-shadow:0 0 0 4px rgba(224,74,74,.1)}
+  .field textarea{resize:vertical;min-height:70px}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  .opt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .opt{
+    position:relative;border:1.5px solid var(--line);border-radius:13px;padding:12px 8px;text-align:center;
+    background:#fff;transition:.2s;cursor:pointer;
+  }
+  .opt input{position:absolute;opacity:0;pointer-events:none}
+  .opt .ico{font-size:1.35rem;display:block;margin-bottom:4px}
+  .opt .lbl{font-size:.76rem;font-weight:800}
+  .opt:has(input:checked){border-color:var(--red);background:#fff5f5;box-shadow:0 0 0 3px rgba(184,29,36,.1)}
+  .opt:has(input:checked) .lbl{color:var(--red)}
+
+  .summary{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:18px}
+  .summary h4{margin:0 0 10px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
+  .sum-item{display:flex;justify-content:space-between;font-size:.83rem;padding:5px 0;gap:10px}
+  .sum-item span:first-child{flex:1;min-width:0}
+  .sum-item .q{color:var(--ink-soft);font-weight:700}
+  .sum-row{display:flex;justify-content:space-between;font-size:.85rem;color:var(--ink-soft);padding:4px 0}
+  .sum-row.total{font-weight:800;color:var(--ink);font-size:1.05rem;border-top:1px dashed var(--line);margin-top:8px;padding-top:10px;font-family:Georgia,serif}
+  .sum-row.total span:last-child{color:var(--red)}
+
+  .hidden{display:none !important}
+
+  /* ---------- RECEIPT ---------- */
+  .receipt{text-align:center}
+  .receipt .stamp{font-size:3rem;margin-bottom:6px}
+  .receipt h3{font-size:1.35rem;color:var(--red)}
+  .receipt .sub{font-size:.83rem;color:var(--ink-soft);margin:6px 0 18px}
+  .rcpt-box{text-align:left;background:#fff;border:1px dashed #d9c7ba;border-radius:15px;padding:16px;font-size:.84rem}
+  .rcpt-box .line{display:flex;justify-content:space-between;padding:5px 0;gap:10px}
+  .rcpt-box .line.head{border-bottom:1px dashed var(--line);padding-bottom:9px;margin-bottom:6px}
+  .rcpt-box .line span:first-child{color:var(--ink-soft)}
+  .rcpt-box .line b{text-align:right}
+  .rcpt-total{display:flex;justify-content:space-between;font-weight:900;font-size:1.05rem;border-top:1px dashed var(--line);margin-top:9px;padding-top:10px;font-family:Georgia,serif}
+  .rcpt-total span:last-child{color:var(--red)}
+  .rcpt-meta{margin-top:14px;font-size:.76rem;color:var(--ink-soft);text-align:left;line-height:1.8}
+  .btn-wa{
+    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:13px;
+    border-radius:12px;background:#25D366;color:#fff;font-weight:800;font-size:.9rem;text-decoration:none;
+    box-shadow:0 8px 20px rgba(37,211,102,.3);
+  }
+
+  /* ---------- TOAST ---------- */
+  #toastWrap{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:120;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+  .toast{
+    background:#241f1d;color:#fff;padding:11px 20px;border-radius:999px;font-size:.84rem;font-weight:600;
+    box-shadow:0 10px 26px rgba(0,0,0,.28);animation:toastIn .3s cubic-bezier(.2,.9,.3,1.3);white-space:nowrap;
+  }
+  .toast.ok{background:linear-gradient(135deg,#1f8f4a,#146c37)}
+  @keyframes toastIn{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--ink-soft)}
+  .empty-state div{font-size:3rem;margin-bottom:10px}
+
+  .footer{text-align:center;padding:26px 20px 40px;font-size:.78rem;color:var(--ink-soft);border-top:1px solid var(--line);background:#fffaf7}
+  .footer b{color:var(--red)}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:980px){
+    .layout{grid-template-columns:1fr;padding-bottom:110px}
+    .fab{display:flex}
+    .close-cart{display:block}
+    .cart-panel{
+      position:fixed;left:0;right:0;bottom:0;top:auto;z-index:70;
+      max-height:86vh;border-radius:22px 22px 0 0;transform:translateY(110%);
+      transition:transform .32s cubic-bezier(.2,.9,.3,1);
+    }
+    .cart-panel.open{transform:translateY(0)}
+    .overlay{position:fixed;inset:0;background:rgba(28,14,12,.55);opacity:0;pointer-events:none;transition:.3s;z-index:65}
+    .overlay.show{opacity:1;pointer-events:auto}
+    .grid{grid-template-columns:1fr}
+  }
+  @media (min-width:981px){ .overlay{display:none} }
+  @media (max-width:520px){
+    .field-row{grid-template-columns:1fr}
+    .opt-grid{grid-template-columns:repeat(3,1fr)}
+    .hero{padding:40px 16px 48px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div id="petals"></div>
+  <div class="hero-inner">
+    <div class="badge-lantern">🏮</div>
+    <h1>桜 Sakura Japanese Dining</h1>
+    <div class="jp-sub">さくら</div>
+    <p class="tagline">Authentic Taste of Kyoto • Authentic Culinary Experience</p>
+    <div class="hero-meta">
+      <span class="chip">🕙 Buka <b>10.00 – 22.00</b></span>
+      <span class="chip">🍵 <b>Free Refill</b> Ocha</span>
+      <span class="chip">🛵 Dine-in • Takeaway • Delivery</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ CATEGORY NAV ============ -->
+<nav class="catnav">
+  <div class="catnav-inner" id="catNav"></div>
+</nav>
+
+<!-- ============ LAYOUT ============ -->
+<div class="layout">
+  <main>
+    <div class="searchbar">
+      <span class="ico">🔍</span>
+      <input type="text" id="searchInput" placeholder="Cari menu… (mis. ramen, salmon, matcha)">
+    </div>
+    <div id="menuArea"></div>
+  </main>
+
+  <aside class="cart-panel" id="cartPanel">
+    <div class="cart-head">
+      <h2>🧾 Pesanan Anda</h2>
+      <button class="close-cart" id="closeCart" aria-label="Tutup">✕</button>
+    </div>
+    <div class="cart-body" id="cartBody"></div>
+    <div class="cart-foot" id="cartFoot"></div>
+  </aside>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- ============ FAB ============ -->
+<button class="fab" id="fabCart">
+  <span>🛍️</span><span>Keranjang</span><span class="badge" id="fabBadge">0</span>
+</button>
+
+<!-- ============ CHECKOUT MODAL ============ -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Konfirmasi Pesanan</h3>
+      <button class="icon-btn" data-close="checkoutModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="summary" id="checkoutSummary"></div>
+
+      <form id="orderForm" novalidate>
+        <div class="field">
+          <label>Tipe Pesanan</label>
+          <div class="opt-grid">
+            <label class="opt"><input type="radio" name="orderType" value="dinein" checked>
+              <span class="ico">🍽️</span><span class="lbl">Dine-in</span></label>
+            <label class="opt"><input type="radio" name="orderType" value="takeaway">
+              <span class="ico">🥡</span><span class="lbl">Takeaway</span></label>
+            <label class="opt"><input type="radio" name="orderType" value="delivery">
+              <span class="ico">🛵</span><span class="lbl">Delivery</span></label>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Nama Pemesan *</label>
+            <input type="text" id="custName" placeholder="Nama lengkap" autocomplete="name">
+          </div>
+          <div class="field">
+            <label>No. WhatsApp *</label>
+            <input type="tel" id="custPhone" placeholder="08xxxxxxxxxx" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field" id="fieldTable">
+          <label>Nomor Meja</label>
+          <input type="text" id="tableNo" placeholder="mis. 12">
+        </div>
+
+        <div class="field hidden" id="fieldAddress">
+          <label>Alamat Pengiriman *</label>
+          <textarea id="address" placeholder="Nama jalan, no. rumah, patokan…"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Metode Pembayaran</label>
+          <select id="payMethod">
+            <option value="Tunai">💵 Tunai (Cash)</option>
+            <option value="QRIS">📱 QRIS</option>
+            <option value="Kartu Debit/Kredit">💳 Kartu Debit / Kredit</option>
+            <option value="E-Wallet">👛 E-Wallet (GoPay/OVO/Dana)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Catatan (opsional)</label>
+          <textarea id="note" placeholder="mis. tidak pedas, tanpa taburan tobiko…"></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">Konfirmasi &amp; Kirim Pesanan 🍱</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RECEIPT MODAL ============ -->
+<div class="modal" id="receiptModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Struk Pesanan</h3>
+      <button class="icon-btn" data-close="receiptModal">✕</button>
+    </div>
+    <div class="modal-body" id="receiptBody"></div>
+  </div>
+</div>
+
+<div id="toastWrap"></div>
+
+<footer class="footer">
+  <b>🏮 Sakura Japanese Dining</b> — Authentic Taste of Kyoto<br>
+  Jl. Sakura No. 12, Jakarta • Telp/WA 0812-3456-7890 • Buka setiap hari 10.00–22.00
+</footer>
+
+<script>
+/* =========================================================
+   DATA MENU
+   ========================================================= */
+const MENU = [
+  // ---------- APPETIZER ----------
+  {id:'a1',cat:'appetizer',name:'Edamame Salted',jp:'枝豆',price:25000,emoji:'🫛',desc:'Kacang kedelai Jepang rebus dengan garam laut'},
+  {id:'a2',cat:'appetizer',name:'Gyoza Chicken (5pcs)',jp:'餃子',price:38000,emoji:'🥟',desc:'Pangsit panggang khas Jepang isi daging ayam'},
+  {id:'a3',cat:'appetizer',name:'Agedashi Tofu',jp:'揚げ出し豆腐',price:32000,emoji:'🍢',desc:'Tahu sutra goreng dengan kuah dashi hangat'},
+  {id:'a4',cat:'appetizer',name:'Chawanmushi',jp:'茶碗蒸し',price:28000,emoji:'🥚',desc:'Tim telur lembut khas Jepang dengan udang & jamur'},
+
+  // ---------- SUSHI & SASHIMI ----------
+  {id:'s1',cat:'sushi',name:'Salmon Sashimi (5pcs)',jp:'サーモン刺身',price:85000,emoji:'🍣',desc:'Irisan ikan salmon segar grade sashimi'},
+  {id:'s2',cat:'sushi',name:'Tuna Nigiri (2pcs)',jp:'まぐろ握り',price:42000,emoji:'🍣',desc:'Nasi sushi dengan topping irisan ikan tuna segar'},
+  {id:'s3',cat:'sushi',name:'Dragon Roll (8pcs)',jp:'ドラゴンロール',price:92000,emoji:'🐉',desc:'Roll isi unagi, timun dengan topping alpukat & tobiko'},
+  {id:'s4',cat:'sushi',name:'California Roll (8pcs)',jp:'カリフォルニアロール',price:58000,emoji:'🥑',desc:'Roll isi crabstick, alpukat, timun & taburan tobiko'},
+  {id:'s5',cat:'sushi',name:'Spicy Salmon Roll',jp:'スパイシーサーモン',price:68000,emoji:'🌶️',desc:'Roll isi salmon pedas dengan saus mayo pedas'},
+  {id:'s6',cat:'sushi',name:'Aburi Salmon Nigiri',jp:'炙りサーモン',price:48000,emoji:'🔥',desc:'Salmon nigiri yang dibakar sejenak dengan saus mentai'},
+
+  // ---------- RAMEN & NOODLES ----------
+  {id:'r1',cat:'ramen',name:'Tonkotsu Special',jp:'豚骨ラーメン',price:68000,emoji:'🍜',desc:'Ramen kuah kaldu gurih tebal, chashu & telur ajitama'},
+  {id:'r2',cat:'ramen',name:'Spicy Miso Ramen',jp:'辛味噌ラーメン',price:65000,emoji:'🍜',desc:'Ramen kuah miso pedas dengan cincangan ayam pedas'},
+  {id:'r3',cat:'ramen',name:'Shoyu Beef Ramen',jp:'醤油ラーメン',price:72000,emoji:'🍜',desc:'Ramen kuah kecap Jepang jernih dengan irisan daging sapi'},
+  {id:'r4',cat:'ramen',name:'Yakisoba Seafood',jp:'焼きそば',price:58000,emoji:'🍝',desc:'Mie goreng khas Jepang dengan cumi & udang segar'},
+
+  // ---------- BENTO & DONBURI ----------
+  {id:'b1',cat:'bento',name:'Chicken Teriyaki Bento',jp:'照り焼き弁当',price:68000,emoji:'🍱',desc:'Nasi, chicken teriyaki, salad, gyoza & miso soup'},
+  {id:'b2',cat:'bento',name:'Beef Yakiniku Don',jp:'焼肉丼',price:75000,emoji:'🍚',desc:'Rice bowl dengan irisan daging sapi tumis saus manis'},
+  {id:'b3',cat:'bento',name:'Unadon (Unagi Don)',jp:'うな丼',price:120000,emoji:'🍱',desc:'Rice bowl dengan belut panggang saus kabayaki lezat'},
+  {id:'b4',cat:'bento',name:'Salmon Mentai Don',jp:'サーモン明太丼',price:78000,emoji:'🍚',desc:'Rice bowl salmon panggang dengan saus mentaiko gurih'},
+
+  // ---------- CHEF'S RECOMMENDATION ----------
+  {id:'c1',cat:'chef',name:'Wagyu A5 Steak Set',jp:'和牛A5ステーキ',price:350000,emoji:'🥩',signature:true,
+   desc:'Daging Wagyu Miyazakigyu A5 (100g) disajikan dengan garlic rice & truffle dashi sauce'},
+
+  // ---------- DESSERT ----------
+  {id:'d1',cat:'dessert',name:'Matcha Parfait',jp:'抹茶パフェ',price:38000,emoji:'🍨',desc:'Es krim matcha, es kacang merah, dango & jelly dashi'},
+  {id:'d2',cat:'dessert',name:'Mochi Ice Cream (3pcs)',jp:'餅アイス',price:32000,emoji:'🍡',desc:'Mochi kenyal isi es krim Matcha, Chocolate, Vanilla'},
+  {id:'d3',cat:'dessert',name:'Japanese Cheesecake',jp:'スフレチーズケーキ',price:35000,emoji:'🍰',desc:'Kue keju panggang super lembut & fluffy khas Osaka'},
+
+  // ---------- BEVERAGES ----------
+  {id:'v1',cat:'beverage',name:'Ocha (Hot / Iced)',jp:'お茶',price:12000,emoji:'🍵',desc:'Teh hijau Jepang asli (Free Refill)'},
+  {id:'v2',cat:'beverage',name:'Matcha Latte',jp:'抹茶ラテ',price:28000,emoji:'🥤',desc:'Seduhan matcha premium dengan susu segar murni'},
+  {id:'v3',cat:'beverage',name:'Yuzu Sparkler',jp:'柚子スパークラー',price:30000,emoji:'🍋',desc:'Minuman segar ekstrak jeruk yuzu & air soda dingin'},
+  {id:'v4',cat:'beverage',name:'Sapporo Beer (330ml)',jp:'サッポロビール',price:55000,emoji:'🍺',desc:'Bir otentik Jepang segar'},
+];
+
+const CATS = [
+  {id:'all',       label:'Semua Menu',        jp:'',              emoji:'🌸'},
+  {id:'chef',      label:"Chef's Recommendation", jp:'おすすめ',  emoji:'🔥'},
+  {id:'appetizer', label:'Appetizer',         jp:'前菜',          emoji:'🍡'},
+  {id:'sushi',     label:'Sushi & Sashimi',   jp:'寿司',          emoji:'🍣'},
+  {id:'ramen',     label:'Ramen & Noodles',   jp:'ラーメン',      emoji:'🍜'},
+  {id:'bento',     label:'Bento & Donburi',   jp:'弁当',          emoji:'🍱'},
+  {id:'dessert',   label:'Dessert',           jp:'デザート',      emoji:'🍰'},
+  {id:'beverage',  label:'Beverages',         jp:'飲み物',        emoji:'🍵'},
+];
+
+const TAX_RATE = 0.10;        // PB1 10%
+const DELIVERY_FEE = 15000;   // biaya antar
+const WA_NUMBER = '6281234567890';
+
+/* =========================================================
+   STATE
+   ========================================================= */
+const state = {
+  cat: 'all',
+  q: '',
+  cart: JSON.parse(localStorage.getItem('sakura_cart') || '{}')
+};
+
+const $  = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rupiah = n => 'Rp ' + n.toLocaleString('id-ID');
+
+const findItem = id => MENU.find(m => m.id === id);
+const qtyOf = id => state.cart[id] || 0;
+
+/* =========================================================
+   CART LOGIC
+   ========================================================= */
+function saveCart(){
+  localStorage.setItem('sakura_cart', JSON.stringify(state.cart));
+}
+
+function setQty(id, q){
+  if (q <= 0) delete state.cart[id];
+  else state.cart[id] = q;
+  saveCart();
+  renderMenu();
+  renderCart();
+}
+
+function totals(){
+  let subtotal = 0, count = 0;
+  Object.entries(state.cart).forEach(([id, q]) => {
+    const m = findItem(id);
+    if (m){ subtotal += m.price * q; count += q; }
+  });
+  const tax = Math.round(subtotal * TAX_RATE);
+  return { subtotal, tax, total: subtotal + tax, count };
+}
+
+/* =========================================================
+   RENDER: CATEGORY NAV
+   ========================================================= */
+function renderCatNav(){
+  $('#catNav').innerHTML = CATS.map(c => `
+    <button class="catbtn ${state.cat === c.id ? 'active' : ''}" data-cat="${c.id}">
+      ${c.emoji} ${esc(c.label)}
+    </button>`).join('');
+}
+
+/* =========================================================
+   RENDER: MENU
+   ========================================================= */
+function cardHTML(m){
+  const q = qtyOf(m.id);
+  return `
+  <article class="card ${m.signature ? 'signature' : ''}">
+    <div class="thumb">${m.emoji}</div>
+    <div class="card-main">
+      <div class="card-top">
+        <h3>${esc(m.name)}</h3>
+        ${m.jp ? `<span class="jp">${esc(m.jp)}</span>` : ''}
+      </div>
+      <p>${esc(m.desc)}</p>
+      <div class="card-foot">
+        <span class="price">${rupiah(m.price)}</span>
+        ${q > 0
+          ? `<div class="stepper">
+               <button data-dec="${m.id}" aria-label="Kurangi">−</button>
+               <span>${q}</span>
+               <button data-inc="${m.id}" aria-label="Tambah">+</button>
+             </div>`
+          : `<button class="btn-add" data-add="${m.id}">+ Tambah</button>`}
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderMenu(){
+  const q = state.q.trim().toLowerCase();
+  const wrap = $('#menuArea');
+
+  const cats = state.cat === 'all'
+    ? CATS.filter(c => c.id !== 'all')
+    : CATS.filter(c => c.id === state.cat);
+
+  let html = '', found = 0;
+
+  cats.forEach(c => {
+    const items = MENU.filter(m =>
+      m.cat === c.id &&
+      (!q || m.name.toLowerCase().includes(q) ||
+             m.desc.toLowerCase().includes(q) ||
+             m.jp.includes(q))
+    );
+    if (!items.length) return;
+    found += items.length;
+
+    html += `
+    <section class="menu-section">
+      <div class="section-head">
+        <h2>${c.emoji} ${esc(c.label)} <span class="jp">${c.jp}</span></h2>
+        <span class="count">${items.length} menu</span>
+      </div>
+      <div class="grid">${items.map(cardHTML).join('')}</div>
+    </section>`;
+  });
+
+  if (!found){
+    html = `<div class="empty-state">
+      <div>🔍</div>
+      <h3>Menu tidak ditemukan</h3>
+      <p>Coba kata kunci lain, misalnya "ramen" atau "salmon".</p>
+    </div>`;
+  }
+
+  wrap.innerHTML = html;
+}
+
+/* =========================================================
+   RENDER: CART
+   ========================================================= */
+function renderCart(){
+  const body = $('#cartBody');
+  const foot = $('#cartFoot');
+  const entries = Object.entries(state.cart);
+
+  if (!entries.length){
+    body.innerHTML = `
+      <div class="cart-empty">
+        <div>🍣</div>
+        <p>Keranjang masih kosong</p>
+        <span>Yuk pilih menu favoritmu!</span>
+      </div>`;
+    foot.innerHTML = '';
+  } else {
+    body.innerHTML = entries.map(([id, q]) => {
+      const m = findItem(id);
+      if (!m) return '';
+      return `
+      <div class="cart-item">
+        <div class="ci-emoji">${m.emoji}</div>
+        <div class="ci-main">
+          <div class="ci-name">${esc(m.name)}</div>
+          <div class="ci-price">${rupiah(m.price)} × ${q} = <b>${rupiah(m.price * q)}</b></div>
+        </div>
+        <div class="stepper small">
+          <button data-dec="${id}">−</button><span>${q}</span><button data-inc="${id}">+</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    const t = totals();
+    foot.innerHTML = `
+      <div class="row"><span>Subtotal</span><span>${rupiah(t.subtotal)}</span></div>
+      <div class="row"><span>PB1 (10%)</span><span>${rupiah(t.tax)}</span></div>
+      <div class="row total"><span>Total</span><span>${rupiah(t.total)}</span></div>
+      <button class="btn-primary" id="btnCheckout">Lanjut ke Checkout →</button>
+    `;
+    $('#btnCheckout').addEventListener('click', openCheckout);
+  }
+
+  updateBadge();
+}
+
+function updateBadge(){
+  const { count } = totals();
+  $('#fabBadge').textContent = count;
+}
+
+/* =========================================================
+   EVENT DELEGATION (qty)
+   ========================================================= */
+document.addEventListener('click', e => {
+  const inc = e.target.closest('[data-inc]');
+  const dec = e.target.closest('[data-dec]');
+  const add = e.target.closest('[data-add]');
+
+  if (inc){
+    setQty(inc.dataset.inc, qtyOf(inc.dataset.inc) + 1);
+  } else if (dec){
+    setQty(dec.dataset.dec, qtyOf(dec.dataset.dec) - 1);
+  } else if (add){
+    const m = findItem(add.dataset.add);
+    setQty(add.dataset.add, qtyOf(add.dataset.add) + 1);
+    if (m) toast(`${m.emoji} ${m.name} ditambahkan`);
+  }
+
+  const catBtn = e.target.closest('[data-cat]');
+  if (catBtn){
+    state.cat = catBtn.dataset.cat;
+    renderCatNav();
+    renderMenu();
+    window.scrollTo({ top: $('.catnav').offsetTop - 4, behavior: 'smooth' });
+  }
+
+  const closeBtn = e.target.closest('[data-close]');
+  if (closeBtn) closeModal(closeBtn.dataset.close);
+});
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+$('#searchInput').addEventListener('input', e => {
+  state.q = e.target.value;
+  renderMenu();
+});
+
+/* =========================================================
+   MOBILE CART DRAWER
+   ========================================================= */
+$('#fabCart').addEventListener('click', () => {
+  $('#cartPanel').classList.add('open');
+  $('#overlay').classList.add('show');
+});
+$('#closeCart').addEventListener('click', closeDrawer);
+$('#overlay').addEventListener('click', closeDrawer);
+function closeDrawer(){
+  $('#cartPanel').classList.remove('open');
+  $('#overlay').classList.remove('show');
+}
+
+/* =========================================================
+   MODAL HELPERS
+   ========================================================= */
+function openModal(id){
+  $('#' + id).classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id){
+  $('#' + id).classList.remove('show');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.modal').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal.show').forEach(m => closeModal(m.id));
+});
+
+/* =========================================================
+   CHECKOUT
+   ========================================================= */
+function orderTypeValue(){
+  const el = document.querySelector('input[name="orderType"]:checked');
+  return el ? el.value : 'dinein';
+}
+
+function renderCheckoutSummary(){
+  const entries = Object.entries(state.cart);
+  const t = totals();
+  const type = orderTypeValue();
+  const fee = type === 'delivery' ? DELIVERY_FEE : 0;
+
+  const items = entries.map(([id, q]) => {
+    const m = findItem(id);
+    if (!m) return '';
+    return `<div class="sum-item">
+      <span>${m.emoji} ${esc(m.name)} <span class="q">×${q}</span></span>
+      <span>${rupiah(m.price * q)}</span>
+    </div>`;
+  }).join('');
+
+  $('#checkoutSummary').innerHTML = `
+    <h4>Ringkasan Pesanan</h4>
+    ${items}
+    <div style="height:8px"></div>
+    <div class="sum-row"><span>Subtotal</span><span>${rupiah(t.subtotal)}</span></div>
+    <div class="sum-row"><span>PB1 (10%)</span><span>${rupiah(t.tax)}</span></div>
+    ${fee ? `<div class="sum-row"><span>Biaya Antar</span><span>${rupiah(fee)}</span></div>` : ''}
+    <div class="sum-row total"><span>Total Bayar</span><span>${rupiah(t.total + fee)}</span></div>
+  `;
+}
+
+function openCheckout(){
+  if (!Object.keys(state.cart).length) return;
+  renderCheckoutSummary();
+  syncOrderTypeFields();
+  openModal('checkoutModal');
+  closeDrawer();
+}
+
+function syncOrderTypeFields(){
+  const type = orderTypeValue();
+  $('#fieldTable').classList.toggle('hidden', type !== 'dinein');
+  $('#fieldAddress').classList.toggle('hidden', type !== 'delivery');
+}
+
+document.querySelectorAll('input[name="orderType"]').forEach(r => {
+  r.addEventListener('change', () => {
+    syncOrderTypeFields();
+    renderCheckoutSummary();
+  });
+});
+
+/* ---------- SUBMIT ORDER ---------- */
+$('#orderForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const name  = $('#custName').value.trim();
+  const phone = $('#custPhone').value.trim();
+  const type  = orderTypeValue();
+  const table = $('#tableNo').value.trim();
+  const addr  = $('#address').value.trim();
+  const pay   = $('#payMethod').value;
+  const note  = $('#note').value.trim();
+
+  if (!name)  return toast('⚠️ Nama pemesan wajib diisi');
+  if (!phone) return toast('⚠️ Nomor WhatsApp wajib diisi');
+  if (!/^[0-9+\-\s]{8,}$/.test(phone)) return toast('⚠️ Nomor WhatsApp tidak valid');
+  if (type === 'delivery' && !addr) return toast('⚠️ Alamat pengiriman wajib diisi');
+
+  const entries = Object.entries(state.cart);
+  const t = totals();
+  const fee = type === 'delivery' ? DELIVERY_FEE : 0;
+  const grand = t.total + fee;
+  const orderId = 'SKR-' + Date.now().toString().slice(-6);
+  const now = new Date();
+  const timeStr = now.toLocaleString('id-ID', {dateStyle:'long', timeStyle:'short'});
+
+  const typeLabel = { dinein:'Dine-in 🍽️', takeaway:'Takeaway 🥡', delivery:'Delivery 🛵' }[type];
+
+  const itemLines = entries.map(([id, q]) => {
+    const m = findItem(id);
+    return `<div class="line"><span>${m.emoji} ${esc(m.name)} ×${q}</span><b>${rupiah(m.price * q)}</b></div>`;
+  }).join('');
+
+  $('#receiptBody').innerHTML = `
+    <div class="receipt">
+      <div class="stamp">✅</div>
+      <h3>Pesanan Diterima!</h3>
+      <p class="sub">Terima kasih, <b>${esc(name)}</b>. Pesananmu sedang kami siapkan 🍱</p>
+
+      <div class="rcpt-box">
+        <div class="line head">
+          <span>No. Pesanan</span><b>${orderId}</b>
+        </div>
+        ${itemLines}
+        <div class="sum-row"><span>Subtotal</span><span>${rupiah(t.subtotal)}</span></div>
+        <div class="sum-row"><span>PB1 (10%)</span><span>${rupiah(t.tax)}</span></div>
+        ${fee ? `<div class="sum-row"><span>Biaya Antar</span><span>${rupiah(fee)}</span></div>` : ''}
+        <div class="rcpt-total"><span>Total</span><span>${rupiah(grand)}</span></div>
+      </div>
+
+      <div class="rcpt-meta">
+        <div>👤 <b>${esc(name)}</b> • ${esc(phone)}</div>
+        <div>📍 Tipe: <b>${typeLabel}</b>${type === 'dinein' && table ? ' — Meja ' + esc(table) : ''}</div>
+        ${type === 'delivery' ? `<div>🏠 Alamat: ${esc(addr)}</div>` : ''}
+        <div>💳 Pembayaran: <b>${esc(pay)}</b></div>
+        ${note ? `<div>📝 Catatan: ${esc(note)}</div>` : ''}
+        <div>🕒 ${timeStr}</div>
+      </div>
+
+      <a class="btn-wa" target="_blank" rel="noopener"
+         href="https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildWaText(orderId, name, phone, typeLabel, table, addr, pay, note, entries, t, fee, grand))}">
+        💬 Konfirmasi via WhatsApp
+      </a>
+      <button class="btn-ghost" style="margin-top:10px" data-close="receiptModal">Tutup</button>
+    </div>
+  `;
+
+  // reset
+  state.cart = {};
+  saveCart();
+  renderMenu();
+  renderCart();
+  $('#orderForm').reset();
+  syncOrderTypeFields();
+
+  closeModal('checkoutModal');
+  openModal('receiptModal');
+});
+
+function buildWaText(orderId, name, phone, typeLabel, table, addr, pay, note, entries, t, fee, grand){
+  let txt = `🏮 *SAKURA JAPANESE DINING* 🏮\n`;
+  txt += `============================\n`;
+  txt += `No. Pesanan : ${orderId}\n`;
+  txt += `Nama        : ${name}\n`;
+  txt += `No. WA      : ${phone}\n`;
+  txt += `Tipe        : ${typeLabel}\n`;
+  if (table) txt += `No. Meja    : ${table}\n`;
+  if (addr)  txt += `Alamat      : ${addr}\n`;
+  txt += `Pembayaran  : ${pay}\n`;
+  txt += `============================\n`;
+  txt += `*DETAIL PESANAN*\n`;
+  entries.forEach(([id, q]) => {
+    const m = findItem(id);
+    txt += `• ${m.name} ×${q} = ${rupiah(m.price * q)}\n`;
+  });
+  txt += `----------------------------\n`;
+  txt += `Subtotal    : ${rupiah(t.subtotal)}\n`;
+  txt += `PB1 (10%)   : ${rupiah(t.tax)}\n`;
+  if (fee) txt += `Biaya Antar : ${rupiah(fee)}\n`;
+  txt += `*TOTAL      : ${rupiah(grand)}*\n`;
+  if (note) txt += `\nCatatan: ${note}\n`;
+  txt += `============================\n`;
+  txt += `Mohon konfirmasi pesanan saya. Terima kasih 🙏`;
+  return txt;
+}
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+function toast(msg, ok = false){
+  const el = document.createElement('div');
+  el.className = 'toast' + (ok ? ' ok' : '');
+  el.textContent = msg;
+  $('#toastWrap').appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity .3s, transform .3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(10px)';
+    setTimeout(() => el.remove(), 320);
+  }, 1700);
+}
+
+/* =========================================================
+   SAKURA PETALS
+   ========================================================= */
+function makePetals(){
+  const c = $('#petals');
+  for (let i = 0; i < 14; i++){
+    const p = document.createElement('span');
+    p.className = 'petal';
+    p.textContent = '🌸';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (9 + Math.random() * 9) + 's';
+    p.style.animationDelay = (-Math.random() * 14) + 's';
+    p.style.fontSize = (10 + Math.random() * 12) + 'px';
+    p.style.opacity = (0.25 + Math.random() * 0.4).toFixed(2);
+    c.appendChild(p);
+  }
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+renderCatNav();
+renderMenu();
+renderCart();
+syncOrderTypeFields();
+makePetals();
+</script>
+</body>
+</html>
